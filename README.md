@@ -23,43 +23,6 @@ gamescope-reloaded/
 ├── README.md            # Project documentation
 ├── gscope               # The gamescope wrapper
 └── setup_gaming_env.sh  # One-time ENV configs for proton flags.
-
-
-Here is the fully consolidated, complete `README.md` file. It incorporates your troubleshooting steps, the `~/.zshrc` path configuration breakdown, and the verification metrics directly into the **Quick Start** and **Usage** sections so the documentation covers everything from scratch.
-
----
-
-### The Final `README.md`
-
-```markdown
-# gamescope-reloaded 🚀
-
-A lightweight, automated display engine wrapper and environment configuration suite designed to streamline high-performance HDR and adaptive-sync gaming on Linux desktop environments.
-
-This repository splits system optimization into two distinct phases: a one-time global environment provisioning script and a high-performance, dynamic hardware-matching display launcher (`gscope`).
-
----
-
-## 🛠️ Features
-
-* **Dynamic Resolution Targeting:** Automatically parses GNOME's native `monitors.xml` configuration to target whichever display is actively flagged as your **Primary** monitor, handling high-refresh-rate layouts gracefully.
-* **Failsafe Geometry Fallbacks:** Robust parameter expansion logic ensures that if configuration files are missing, the system automatically drops back to working defaults rather than crashing the display server.
-* **Systemd Environment Provisioning:** Automatically deploys `environment.d` modules to enforce Wayland pipelines and Proton optimizations across all gaming execution wrappers (Steam, Lutris, etc.).
-* **Zero-Overhead Launcher:** Replaces the execution thread entirely using standard Linux `exec` bindings, ensuring the wrapper adds exactly 0% CPU/memory overhead while your game is active.
-
----
-
-## 📦 Project Structure
-
-```text
-gamescope-reloaded/
-├── Makefile             # Automated installation and teardown compiler
-├── README.md            # Project documentation
-├── gscope               # The extensionless dynamic display launcher
-└── setup_gaming_env.sh  # One-time system environment configuration script
-
-```
-
 ---
 
 ## 🚀 Quick Start
