@@ -23,6 +23,7 @@ gamescope-reloaded/
 ├── README.md            # Project documentation
 ├── gscope               # The gamescope wrapper
 └── setup_gaming_env.sh  # One-time ENV configs for proton flags.
+```
 ---
 
 ## 🚀 Quick Start
