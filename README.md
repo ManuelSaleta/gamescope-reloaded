@@ -130,10 +130,14 @@ gscope
 
 To use the dynamic display wrapper, open your game's **Properties** panel inside Steam and append the command directly to your **Launch Options**:
 
+> [!IMPORTANT]
+> Make sure to complete restart steam before using gscope wrapper. This is so Steam knows wth is gscope. I encourage you to just restart your PC... or kill the process if you'd like that better.
+
 ```text
 gscope %command%
 
 ```
+
 
 ### Expected Output Logs
 
