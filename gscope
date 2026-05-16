@@ -1,0 +1,67 @@
+#!/usr/bin/env bash
+
+##########################################################################
+##########################################################################
+##########################################################################
+
+##########################################################################
+# This section creates a wrapper for gamescope to make life easier
+# easier when configuring launch options for Steam games. 
+##########################################################################
+
+# HOW TO USE:
+# Move and rename the file to your local bin directory
+# mv ~/gscope.sh ~/.local/bin/gscope
+
+# Ensure it still has executable permissions
+# chmod +x ~/.local/bin/gscope
+
+# Ensure your system sees the command:
+# $ gscope
+
+# Then in the Steam Launch options. Simply use:
+# gscope %command%
+##########################################################################
+
+MONITOR_XML="$HOME/.config/monitors.xml"
+
+if [ -f "$MONITOR_XML" ]; then
+    # Locate the <logicalmonitor> block that contains the PRIMARY status - before I was just grabbing the first display.
+    # This resulted in sometimes grabbing the undesired (secondary) monitor
+    # Then parse out the width, height, and refresh rate inside its active mode
+    PRIMARY_BLOCK=$(awk '/<logicalmonitor>/{flag=1; block=""} flag{block=block "\n" $0} /<\/logicalmonitor>/{flag=0; if(block ~ /<primary>yes<\/primary>/) print block}' "$MONITOR_XML")
+    
+    if [ -n "$PRIMARY_BLOCK" ]; then
+        # Grab the values we want:
+        WIDTH=$(echo "$PRIMARY_BLOCK" | grep -oP '(?<=<width>)\d+(?=</width>)' | head -n 1)
+        HEIGHT=$(echo "$PRIMARY_BLOCK" | grep -oP '(?<=<height>)\d+(?=</height>)' | head -n 1)
+        REFRESH=$(echo "$PRIMARY_BLOCK" | grep -oP '(?<=<rate>)\d+(\.\d+)?(?=</rate>)' | head -n 1)
+        
+        # Convert floating point refresh rates (e.g. 164.99) to integers for gamescope
+        REFRESH=${REFRESH%.*}
+    fi
+fi
+
+# Failsafe fallback to your absolute peak configuration if XML parsing fails. 
+# Incase something goes wrong we want a workable resolution
+# This only assigns these default in the variables are empty at this point.
+WIDTH=${WIDTH:-1920}
+HEIGHT=${HEIGHT:-1080}
+REFRESH=${REFRESH:-60}
+
+echo "Detected Primary Hardware Layout: ${WIDTH}x${HEIGHT} @ ${REFRESH}Hz"
+
+GAMESCOPE_ARGS=(
+    -w "$WIDTH"
+    -h "$HEIGHT"
+    -W "$WIDTH"
+    -H "$HEIGHT"
+    -r "$REFRESH"
+    -f
+    --hdr-enabled
+    --adaptive-sync
+    --
+)
+
+echo "Launching: gamescope ${GAMESCOPE_ARGS[@]} $@"
+exec gamescope "${GAMESCOPE_ARGS[@]}" "$@"
