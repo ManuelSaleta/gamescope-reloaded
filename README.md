@@ -40,6 +40,13 @@ sudo dnf install gamescope make
 sudo apt-get install gamescope make
 ```
 
+## 🚀 Global Installation & Steam Integration (Required)
+
+
+By default, the application installs to a user-local directory (`~/.local/bin/`), which Steam often cannot see. Running the following command creates a system-wide symbolic link (symlink), making `gscope` accessible from anywhere, as opposed to having to launch steam from the terminal so it can see the gscope wrapper. 
+
+```bash
+sudo ln -s ~/.local/bin/gscope /usr/local/bin/gscope
 
 
 ### 2. Deploy Everything
@@ -134,3 +141,13 @@ The included `Makefile` handles standard environment workflows safely:
 * [GloriousEggroll Custom Proton Release Tree](https://github.com/GloriousEggroll/proton-ge-custom)
 
 ```
+
+
+## 🔍 Alternative Tools & Troubleshooting
+
+If you are looking for alternatives, check out the open-source repository scopebuddy.
+
+It operates much in the same way that gscope does and features a highly robust toolset. However, please note that at the time of writing, scopebuddy has some dependencies not met Fedora 44, requiring some additional work. (which I did not want to do) so - If you are running Fedora or encounter unexpected bugs with it, gscope serves as the reliable fallback implementation detailed in this guide.
+
+
+[ScopeBuddy](https://github.com/OpenGamingCollective/ScopeBuddy)
