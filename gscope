@@ -2,26 +2,6 @@
 
 ##########################################################################
 ##########################################################################
-##########################################################################
-
-##########################################################################
-# This section creates a wrapper for gamescope to make life easier
-# easier when configuring launch options for Steam games. 
-##########################################################################
-
-# HOW TO USE:
-# Move and rename the file to your local bin directory
-# mv ~/gscope.sh ~/.local/bin/gscope
-
-# Ensure it still has executable permissions
-# chmod +x ~/.local/bin/gscope
-
-# Ensure your system sees the command:
-# $ gscope
-
-# Then in the Steam Launch options. Simply use:
-# gscope %command%
-##########################################################################
 
 ####### Add dry-run option for testing without launching gamescope #######
 # Initialize dry run variable
@@ -33,6 +13,67 @@ if [[ "$1" == "-d" || "$1" == "--dry-run" ]]; then
     shift # Remove the flag from the argument list ($@)
 fi
 ####### Add dry-run option for testing without launching gamescope #######
+
+##########################################################################
+##############################HELPERS#####################################
+function is_gamescope_installed() {
+    if ! command -v gamescope &> /dev/null; then
+        echo "Error: gamescope is not installed or not in PATH."
+        return 1  # 1 means "false" or failure in shell scripting
+    fi
+    return 0      # 0 means "true" or success
+}
+
+function install_gamescope() {
+    if is_gamescope_installed; then
+        echo "gamescope is already installed! - Nice..."
+        return 0
+    fi
+
+    echo "Did not find gamescope. Detecting package manager..."
+
+    # 1. Determine which package manager is available
+    local cmd=""
+    if command -v apt-get &>/dev/null; then
+        cmd="sudo apt-get update && sudo apt-get install -y gamescope"
+    elif command -v dnf &>/dev/null; then
+        cmd="sudo dnf install -y gamescope"
+    elif command -v pacman &>/dev/null; then
+        cmd="sudo pacman -S --noconfirm gamescope"
+    else
+        echo "Error: Could not find a supported package manager (apt, dnf, or pacman)."
+        echo "Please install gamescope manually."
+        return 1
+    fi
+
+    # 2. Act based on the DRY_RUN flag
+    if [ "$DRY_RUN" = true ]; then
+        echo "[DRY-RUN] Would have executed: $cmd"
+        return 0
+    else
+        # Evaluate and run the installation command string
+        eval "$cmd"
+    fi
+}
+
+##########################################################################
+# This section creates a wrapper for gamescope to make life easier
+# easier when configuring launch options for Steam games. 
+##########################################################################
+
+# HOW TO USE:
+# Move and rename the file to your local bin directory
+# mv ~/gscope ~/.local/bin/gscope
+
+# Ensure it still has executable permissions
+# chmod +x ~/.local/bin/gscope
+
+# Ensure your system sees the command:
+# $ gscope
+
+# Then in the Steam Launch options. Simply use:
+# gscope %command%
+##########################################################################
 
 
 MONITOR_XML="$HOME/.config/monitors.xml"
@@ -55,7 +96,7 @@ if [ -f "$MONITOR_XML" ]; then
 fi
 
 # Failsafe fallback to your absolute peak configuration if XML parsing fails. 
-# Incase something goes wrong we want a workable resolution
+# In case something goes wrong we want a workable resolution
 # This only assigns these default in the variables are empty at this point.
 WIDTH=${WIDTH:-1920}
 HEIGHT=${HEIGHT:-1080}
@@ -78,8 +119,10 @@ GAMESCOPE_ARGS=(
 
 if [ "$DRY_RUN" = true ]; then
     echo "--- DRY RUN MODE ---"
+    install_gamescope
     echo "Would execute: gamescope ${GAMESCOPE_ARGS[@]} $@"
 else
+    install_gamescope
     echo "Launching: gamescope ${GAMESCOPE_ARGS[@]} $@"
     exec gamescope "${GAMESCOPE_ARGS[@]}" "$@"
 fi
