@@ -23,6 +23,18 @@
 # gscope %command%
 ##########################################################################
 
+####### Add dry-run option for testing without launching gamescope #######
+# Initialize dry run variable
+DRY_RUN=false
+
+# Check if the first argument is a dry-run flag
+if [[ "$1" == "-d" || "$1" == "--dry-run" ]]; then
+    DRY_RUN=true
+    shift # Remove the flag from the argument list ($@)
+fi
+####### Add dry-run option for testing without launching gamescope #######
+
+
 MONITOR_XML="$HOME/.config/monitors.xml"
 
 if [ -f "$MONITOR_XML" ]; then
@@ -63,5 +75,11 @@ GAMESCOPE_ARGS=(
     --
 )
 
-echo "Launching: gamescope ${GAMESCOPE_ARGS[@]} $@"
-exec gamescope "${GAMESCOPE_ARGS[@]}" "$@"
+
+if [ "$DRY_RUN" = true ]; then
+    echo "--- DRY RUN MODE ---"
+    echo "Would execute: gamescope ${GAMESCOPE_ARGS[@]} $@"
+else
+    echo "Launching: gamescope ${GAMESCOPE_ARGS[@]} $@"
+    exec gamescope "${GAMESCOPE_ARGS[@]}" "$@"
+fi
