@@ -8,16 +8,34 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v4
 
+    # 1. Install the tools needed to build the configure script
+    - name: Install Autotools dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y autoconf automake make gcc g++
+
+    # 2. Generate the ./configure script
+    - name: Generate configure script
+      run: |
+        if [ -f "autogen.sh" ]; then
+          ./autogen.sh
+        elif [ -f "bootstrap" ]; then
+          ./bootstrap
+        else
+          autoreconf --install --force
+        fi
+
     - name: configure
       run: ./configure
 
-    - name: Install dependencies
+    # Note: Often "make" requires dependencies. If 'make' fails, 
+    # make sure to add any required libraries to the apt-get step above!
+    - name: Build
       run: make
 
     - name: Run check
