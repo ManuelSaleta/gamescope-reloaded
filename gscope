@@ -59,7 +59,7 @@ GAMESCOPE_ARGS=(
     -r "$REFRESH"
     -f
     --hdr-enabled
-    --adaptive-sync
+    --hdr-itm-enable
     --
 )
 
